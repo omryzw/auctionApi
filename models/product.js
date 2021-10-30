@@ -55,6 +55,15 @@ const ProdctSchema = new mongoose.Schema({
         }
     },
 ],
+autoBidders: [{
+    user: {
+        type: String,
+    }
+    ,
+    maxAmount: {
+        type: Number,
+    }
+}],
 }, {
     timestamps: true
 });
