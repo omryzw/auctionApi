@@ -7,6 +7,7 @@ const ProdctSchema = new mongoose.Schema({
     category:{
         type: String,
         required: [true, "Category is a required field"],
+        default: "Others"
     },
     active: {
         type: Boolean,
@@ -44,6 +45,16 @@ const ProdctSchema = new mongoose.Schema({
         required: [true, "Photo is a required field"],
 
     },
+    bids : [{
+        user: {
+            type: String,
+        }
+        ,
+        amount: {
+            type: Number,
+        }
+    },
+],
 }, {
     timestamps: true
 });
