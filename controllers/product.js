@@ -91,9 +91,10 @@ exports.bidOnProduct = async (req, res) => {
 }
 
 
-exports.setupAutoBid = async (req, res) => {
+exports.setupAutoBidOnProduct = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id)
+        const {user} = req.body
         // if there are more than one auto bidder then reject for now
         if (product.autoBidders.length > 1) {
             return res.json({
@@ -101,7 +102,8 @@ exports.setupAutoBid = async (req, res) => {
                 message: 'Only one auto bidder is allowed for now'
             })
         }
-        product.autoBidders = req.body
+        // push to the autoBidders array
+        product.autoBidders.push(user)
         const results = await product.save()
         return res.json({
             status: 'success',
