@@ -96,7 +96,7 @@ exports.setupAutoBidOnProduct = async (req, res) => {
         const product = await Product.findById(req.params.id)
         const {user} = req.body
         // if there are more than one auto bidder then reject for now
-        if (product.autoBidders.length > 1) {
+        if (product.autoBidders.length == 1) {
             return res.json({
                 status: 'error',
                 message: 'Only one auto bidder is allowed for now'
