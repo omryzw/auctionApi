@@ -16,7 +16,6 @@ exports.addNewProduct = async (req, res) => {
             status: 'error',
             message: error.message
         })
-
     }
 }
 
