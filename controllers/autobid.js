@@ -1,9 +1,12 @@
 const {
-    Autobid, Product
+    Autobid,
+    Product,
+    Notification
 } = require('../models/index');
 
 exports.addNewAutobid = async (req, res) => {
     try {
+        req.body.controlAmount = req.body.maxAmount
         const newAutobid = new Autobid(req.body);
         const results = await newAutobid.save();
         return res.json({
@@ -22,7 +25,9 @@ exports.addNewAutobid = async (req, res) => {
 exports.setupAutoBidOnProduct = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id)
-        const {user} = req.body
+        const {
+            user
+        } = req.body
         // if there are more than one auto bidder then reject for now
         if (product.autoBidders.length == 1) {
             return res.json({
@@ -80,42 +85,41 @@ exports.bidOnProduct = async (req, res) => {
 }
 
 
-
 // helper function to auto bid on a product
 const autoBid = async (product) => {
-    try {
-        // if there are more than one auto bidders then we need to loop through them and bid on the product with the one with the highest maxAmount but a dollar amount more than the second highest maxAmount bid
-        // this was not fully implemented since we won't have more than one auto bidder
-        if (product.autoBidders.length > 1) {
-            const maxAmount = product.autoBidders.reduce((max, current) => {
-                return current.maxAmount > max ? current.maxAmount : max
-            }, 0)
-            const autoBidders = product.autoBidders.filter(autoBidder => autoBidder.maxAmount === maxAmount)
-            const autoBidder = autoBidders[Math.floor(Math.random() * autoBidders.length)]
-            const currentBid = {
-                amount: autoBidder.maxAmount,
-                user: autoBidder.user
+    if (product.autoBidders.length > 0) {
+        const autoBidder = product.autoBidders[0]
+        const autoBidderDetails = await Autobid.find({
+            user: autoBidder
+        })
+        if (autoBidderDetails[0].maxAmount > 0) {
+            autoBidderDetails[0].maxAmount = autoBidderDetails[0].maxAmount - 1
+            await autoBidderDetails[0].save()
+            if (autoBidderDetails[0].maxAmount == 0) {
+                const notification = new Notification({
+                    user: autoBidder,
+                    message: 'The funds reserverd for autobidding have been depleted'
+                })
+                await notification.save()
             }
-            if (currentBid.amount > product.currentBid.amount) {
-                product.currentBid = currentBid
-                product.bids.push(currentBid)
-                await product.save()
+            let diff = autoBidderDetails[0].controlAmount - autoBidderDetails[0].maxAmount
+            let percent = (diff / autoBidderDetails[0].controlAmount) * 100
+            if (percent >= autoBidderDetails[0].alertTrigger) {
+                const notification = new Notification({
+                    user: autoBidder,
+                    message: `The funds reserverd for autobidding are running low, approximately ${percent.toFixed(1)}% has been used so far.`
+                })
+                await notification.save()
             }
-        } else {
-            // if there is only one auto bidder then we can just bid on the product with the highest maxAmount
-            const autoBidder = product.autoBidders[0]
-            if (product.autoBidders[0].maxAmount > product.currentBid.amount) {
-                const currentBid = {
-                    amount: product.currentBid.amount + 1,
-                    user: autoBidder.user
-                }
-                product.currentBid = currentBid
-                product.bids.push(currentBid)
-                await product.save()
+            product.bids.push({
+                user: autoBidder,
+                amount: product.currentBid.amount + 1
+            })
+            product.currentBid = {
+                user: autoBidder,
+                amount: product.currentBid.amount + 1
             }
+            await product.save()
         }
-    } catch (error) {
-        console.log(error)
-        return false
     }
 }

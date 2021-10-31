@@ -9,6 +9,11 @@ const autoBidSchema = new mongoose.Schema({
         required: [true, "maxAmount is a required field"],
 
     },
+    controlAmount: {
+        // same as maxAmount
+        type: Number,
+        required: [true, "controlAmount is a required field"],
+    },
     alertTrigger: {
         type: Number,
         required: [true, "alertTrigger is a required field"],
