@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const autoBidSchema = new mongoose.Schema({
     user: {
         type: String,
-        required: true
+        required: [true, "User is a required field"],
     },
     maxAmount: {
         type: Number,
