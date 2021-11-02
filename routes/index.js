@@ -1,5 +1,6 @@
-const productRouter = require('./product')
-const aBidRouter = require('./autobid')
+const productRouter = require("./product");
+const aBidRouter = require("./autobid");
+const notifyRouter = require("./notification");
 
 module.exports = (app) => {
   app.get("/", (req, res) => {
@@ -8,8 +9,7 @@ module.exports = (app) => {
     });
   });
 
-  app.use('/product', productRouter);
-  app.use('/autobid', aBidRouter);
-
-
-}
+  app.use("/product", productRouter);
+  app.use("/autobid", aBidRouter);
+  app.use("/notify", notifyRouter);
+};
