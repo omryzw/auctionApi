@@ -4,22 +4,32 @@ const ProdctSchema = new mongoose.Schema({
         type: String,
         required: [true, "Name is a required field"],
     },
+    description : {
+        type: String,
+        required: [true, "Description is a required field"],
+        default: "No description"
+    },
+    category:{
+        type: String,
+        required: [true, "Category is a required field"],
+        default: "Others"
+    },
     active: {
         type: Boolean,
         default: true,
         // every product added is already active for this demo , there is nos start date
     },
-    endTime: {
-        hours : {
-            type: Number,
-            required: [true, "Hours is a required field"],
-        },
-        minutes : {
-            type: Number,
-            required: [true, "Minutes is a required field"],
-        },
+    // endTime: {
+    //     hours : {
+    //         type: Number,
+    //         required: [true, "Hours is a required field"],
+    //     },
+    //     minutes : {
+    //         type: Number,
+    //         required: [true, "Minutes is a required field"],
+    //     },
         
-    },
+    // },
     endDate: {
         type: Date,
         required: [true, "End Date is a required field"],
@@ -40,6 +50,20 @@ const ProdctSchema = new mongoose.Schema({
         required: [true, "Photo is a required field"],
 
     },
+    bids : [{
+        user: {
+            type: String,
+        }
+        ,
+        amount: {
+            type: Number,
+        }
+    },
+],
+autoBidders: {
+    type: Array,
+    default: []
+}
 }, {
     timestamps: true
 });
