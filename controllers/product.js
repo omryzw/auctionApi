@@ -22,7 +22,7 @@ exports.addNewProduct = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
     // if a filter exists, then filter the results by either category, current price, highest bid to lowest bid, or lowest bid to highest bid
     try {
-        const products = await Product.find({}, {
+        const products = await Product.find({active:true}, {
             __v: 0,
             bids: 0
         })
@@ -56,6 +56,27 @@ exports.getProductById = async (req, res) => {
         })
     }
 }
+
+// change status  of product from active to inactive
+exports.changeProductStatus = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id)
+        product.active = false
+        const results = await product.save()
+        return res.json({
+            status: 'success',
+            content: results,
+            message: 'Product status changed successfully'
+        })
+    }
+    catch (error) {
+        return res.json({
+            status: 'error',
+            message: error.message
+        })
+    }
+}
+
 
 
 
