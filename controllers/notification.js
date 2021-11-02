@@ -12,6 +12,7 @@ exports.getUserNotifications = async (req, res) => {
         return res.json({
             status: 'success',
             content: notifications,
+            total: notifications.length
         })
     } catch (error) {
         return res.json({

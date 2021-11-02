@@ -19,17 +19,17 @@ const ProdctSchema = new mongoose.Schema({
         default: true,
         // every product added is already active for this demo , there is nos start date
     },
-    endTime: {
-        hours : {
-            type: Number,
-            required: [true, "Hours is a required field"],
-        },
-        minutes : {
-            type: Number,
-            required: [true, "Minutes is a required field"],
-        },
+    // endTime: {
+    //     hours : {
+    //         type: Number,
+    //         required: [true, "Hours is a required field"],
+    //     },
+    //     minutes : {
+    //         type: Number,
+    //         required: [true, "Minutes is a required field"],
+    //     },
         
-    },
+    // },
     endDate: {
         type: Date,
         required: [true, "End Date is a required field"],
