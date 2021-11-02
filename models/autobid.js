@@ -17,6 +17,7 @@ const autoBidSchema = new mongoose.Schema({
     alertTrigger: {
         type: Number,
         required: [true, "alertTrigger is a required field"],
+        default:10
     },
 }, {timestamps:true});
 

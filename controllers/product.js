@@ -20,6 +20,7 @@ exports.addNewProduct = async (req, res) => {
 }
 
 exports.getAllProducts = async (req, res) => {
+    // if a filter exists, then filter the results by either category, current price, highest bid to lowest bid, or lowest bid to highest bid
     try {
         const products = await Product.find({}, {
             __v: 0,

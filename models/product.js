@@ -4,6 +4,11 @@ const ProdctSchema = new mongoose.Schema({
         type: String,
         required: [true, "Name is a required field"],
     },
+    description : {
+        type: String,
+        required: [true, "Description is a required field"],
+        default: "No description"
+    },
     category:{
         type: String,
         required: [true, "Category is a required field"],

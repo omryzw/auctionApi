@@ -1,8 +1,4 @@
-const {
-    Autobid,
-    Product,
-    Notification
-} = require('../models/index');
+const { Autobid, Product, Notification } = require('../models/index');
 
 exports.addNewAutobid = async (req, res) => {
     try {
@@ -26,7 +22,8 @@ exports.setupAutoBidOnProduct = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id)
         const {
-            user
+            user,
+            action
         } = req.body
         // if there are more than one auto bidder then reject for now
         if (product.autoBidders.length == 1) {
@@ -37,10 +34,9 @@ exports.setupAutoBidOnProduct = async (req, res) => {
         }
         // push to the autoBidders array
         product.autoBidders.push(user)
-        const results = await product.save()
+        await product.save()
         return res.json({
             status: 'success',
-            content: results,
             message: 'Auto bid setup successfully'
         })
     } catch (error) {
@@ -61,11 +57,10 @@ exports.bidOnProduct = async (req, res) => {
         if (currentBid.amount > product.currentBid.amount) {
             product.currentBid = currentBid
             product.bids.push(currentBid)
-            const results = await product.save()
+            await product.save()
             autoBid(results)
             return res.json({
                 status: 'success',
-                content: results,
                 message: 'Bid placed successfully'
             })
         } else {
