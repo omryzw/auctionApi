@@ -7,5 +7,7 @@ router.put("/product/:id", aBidController.setupAutoBidOnProduct);
 
 router.put("/direct/:id", aBidController.bidOnProduct);
 
+router.get("/won", aBidController.getBidsWon);
+
 
 module.exports = router;

@@ -1,4 +1,8 @@
-const { Autobid, Product, Notification } = require('../models/index');
+const {
+    Autobid,
+    Product,
+    Notification
+} = require('../models/index');
 
 exports.addNewAutobid = async (req, res) => {
     try {
@@ -20,25 +24,36 @@ exports.addNewAutobid = async (req, res) => {
 
 exports.setupAutoBidOnProduct = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id)
-        const {
-            user,
-            action
-        } = req.body
-        // if there are more than one auto bidder then reject for now
-        if (product.autoBidders.length == 1) {
+        // first check if does the user have an auto bid setup
+        const autoBidder = await Autobid.find({
+            user: req.body.user
+        });
+        if (autoBidder.length > 0) {
+            const product = await Product.findById(req.params.id)
+            const {
+                user,
+                action
+            } = req.body
+            // if there are more than one auto bidder then reject for now
+            if (product.autoBidders.length == 1) {
+                return res.json({
+                    status: 'error',
+                    message: 'Only one auto bidder is allowed for now'
+                })
+            }
+            // push to the autoBidders array
+            product.autoBidders.push(user)
+            await product.save()
             return res.json({
-                status: 'error',
-                message: 'Only one auto bidder is allowed for now'
+                status: 'success',
+                message: 'Auto bid setup successfully'
+            })
+        } else {
+            return res.json({
+                status: 'exist',
+                message: 'You have no auto bid setup'
             })
         }
-        // push to the autoBidders array
-        product.autoBidders.push(user)
-        await product.save()
-        return res.json({
-            status: 'success',
-            message: 'Auto bid setup successfully'
-        })
     } catch (error) {
         return res.json({
             status: 'error',
@@ -116,5 +131,26 @@ const autoBid = async (product) => {
             }
             await product.save()
         }
+    }
+}
+
+exports.getBidsWon = async (req, res) => {
+    try {
+        const bids = await Product.find({
+            'currentBid.user': req.query.user,
+            active: false
+        }, {
+            __v: 0
+        })
+        return res.json({
+            status: 'success',
+            content: bids,
+            message: 'Bids retrieved successfully'
+        })
+    } catch (error) {
+        return res.json({
+            status: 'error',
+            message: error.message
+        })
     }
 }
